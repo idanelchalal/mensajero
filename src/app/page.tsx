@@ -1,9 +1,6 @@
 import Button from "@/components/ui/Button";
-import { Inter } from "next/font/google";
-
-const inter = Inter({ subsets: ["latin"] });
-
-export default function Home() {
+import { db } from "@/lib/db";
+export default async function Home() {
   return (
     <>
       <Button>Button</Button>
