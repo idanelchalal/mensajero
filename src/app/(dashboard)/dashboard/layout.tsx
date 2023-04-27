@@ -6,6 +6,8 @@ import { notFound } from "next/navigation";
 import { FC, ReactNode } from "react";
 import Image from "next/image";
 import SignOutButton from "@/components/SignOutButton";
+import FriendsRequestsSidebarOptions from "@/components/FriendsRequestsSidebarOptions";
+import { fetchRedis } from "@/helpers/redis";
 
 interface layoutProps {
   children: ReactNode;
@@ -33,6 +35,13 @@ const layout = async ({ children }: layoutProps) => {
     notFound();
   }
 
+  const unseenRequestCount = (
+    (await fetchRedis(
+      "smembers",
+      `user:${session.user.id}:incoming_friend_requests`
+    )) as User[]
+  ).length;
+
   return (
     <div
       className="
@@ -51,24 +60,34 @@ const layout = async ({ children }: layoutProps) => {
             <div className="text-xs font-semibold leading-6 text-gray-400">
               Overview
             </div>
-            <ul className="-mx-2 mt-2 space-y-1" role="list">
-              {sidebarOptions.map((option) => {
-                const Icon = Icons[option.Icon];
-                return (
-                  <li key={option.id}>
-                    <Link
-                      href={option.href}
-                      className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-3 rounded-md p-2 leading-6 font-semibold"
-                    >
-                      <span className="text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600 flex h-6 w-6 shrink-0 items-center group-hover:border justify-center rounded-lg border-text-[0.625rem] font-medium bg-white">
-                        <Icon className="h-4 w-4" />
-                      </span>
-                      <span className="truncate">{option.name}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            <li>
+              <ul className="-mx-2 mt-2 space-y-1" role="list">
+                {sidebarOptions.map((option) => {
+                  const Icon = Icons[option.Icon];
+                  return (
+                    <li key={option.id}>
+                      <Link
+                        href={option.href}
+                        className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-3 rounded-md p-2 leading-6 font-semibold"
+                      >
+                        <span className="text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600 flex h-6 w-6 shrink-0 items-center group-hover:border justify-center rounded-lg border-text-[0.625rem] font-medium bg-white">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="truncate">{option.name}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+
+            <li>
+              <FriendsRequestsSidebarOptions
+                sessionId={session.user.id}
+                initialUnseenRequestCount={unseenRequestCount}
+              />
+            </li>
+
             <li className="mt-auto flex items-center">
               <div className="flex flex-1 items-center gap-x-2 px-2 py-3 text-sm font-semibold leading-6 text-gray-900">
                 <div className="relative h-8 w-8 bg-gray-50">
