@@ -4,6 +4,8 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import { FC, ReactNode } from "react";
+import Image from "next/image";
+import SignOutButton from "@/components/SignOutButton";
 
 interface layoutProps {
   children: ReactNode;
@@ -67,6 +69,28 @@ const layout = async ({ children }: layoutProps) => {
                 );
               })}
             </ul>
+            <li className="mt-auto flex items-center">
+              <div className="flex flex-1 items-center gap-x-2 px-2 py-3 text-sm font-semibold leading-6 text-gray-900">
+                <div className="relative h-8 w-8 bg-gray-50">
+                  <Image
+                    fill
+                    referrerPolicy="no-referrer"
+                    className="rounded-full"
+                    src={session.user.image || ""}
+                    alt="your profile picture"
+                  />
+                </div>
+                <span className="sr-only">Your profile</span>
+              </div>
+              <div className="flex flex-col">
+                <span aria-hidden="true">{session.user.name}</span>
+                <span className="text-xs text-zinc-400" aria-hidden="true">
+                  {session.user.email}
+                </span>
+              </div>
+
+              <SignOutButton className="h-full aspect-square" />
+            </li>
           </ul>
         </nav>
       </div>
