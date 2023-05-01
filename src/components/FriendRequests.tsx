@@ -41,7 +41,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
 
       pusherClient.unbind("incoming_friend_requests", friendRequestHandler);
     };
-  }, []);
+  }, [sessionId]);
 
   const denyFriend = async (senderId: string) => {
     await axios.post("/api/friends/deny", {
